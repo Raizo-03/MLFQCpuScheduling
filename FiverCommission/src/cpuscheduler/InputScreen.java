@@ -1,144 +1,252 @@
 package cpuscheduler;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InputScreen extends JFrame {
-    private JTextField numProcessesField;
+    private JTextField processNameField;
     private JComboBox<String> processTypeBox;
     private JTextField arrivalTimeField;
     private JTextField burstTimeField;
-    private JTextArea processListArea;
+    private JTable processTable;
+    private DefaultTableModel tableModel;
     private List<Process> processList;
     private JComboBox<String> predefinedInputsBox;
 
+    private static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 12);
+    private static final Font INPUT_FONT = new Font("Arial", Font.PLAIN, 12);
+    private static final Font BUTTON_FONT = new Font("Arial", Font.BOLD, 12);
+    private static final Font TABLE_HEADER_FONT = new Font("Arial", Font.BOLD, 12);
+    private static final Font TABLE_FONT = new Font("Arial", Font.PLAIN, 12);
+
     public InputScreen() {
-        setTitle("Input Screen");
-        setSize(800, 600);
+        setTitle("CPU Scheduling Simulator");
+        setSize(600, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
+
         processList = new ArrayList<>();
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(6, 2));
+        // Input Panel
+        JPanel inputPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        JLabel numProcessesLabel = new JLabel("Number of Processes:");
-        numProcessesField = new JTextField();
-        inputPanel.add(numProcessesLabel);
-        inputPanel.add(numProcessesField);
+        // Process Name
+        gbc.gridx = 0; gbc.gridy = 0;
+        JLabel processNameLabel = new JLabel("Process Name");
+        processNameLabel.setFont(LABEL_FONT);
+        inputPanel.add(processNameLabel, gbc);
+        gbc.gridx = 1;
+        processNameField = new JTextField(10);
+        processNameField.setFont(INPUT_FONT);
+        inputPanel.add(processNameField, gbc);
 
-        JLabel processTypeLabel = new JLabel("Type of Process:");
-        processTypeBox = new JComboBox<>(new String[]{"real-time", "system", "interactive", "batch"});
-        inputPanel.add(processTypeLabel);
-        inputPanel.add(processTypeBox);
+        // Type of Process
+        gbc.gridx = 0; gbc.gridy = 1;
+        JLabel processTypeLabel = new JLabel("Type of Process");
+        processTypeLabel.setFont(LABEL_FONT);
+        inputPanel.add(processTypeLabel, gbc);
+        gbc.gridx = 1;
+        processTypeBox = new JComboBox<>(new String[]{"system", "interactive", "batch"});
+        processTypeBox.setFont(INPUT_FONT);
+        inputPanel.add(processTypeBox, gbc);
 
-        JLabel arrivalTimeLabel = new JLabel("Arrival Time:");
-        arrivalTimeField = new JTextField();
-        inputPanel.add(arrivalTimeLabel);
-        inputPanel.add(arrivalTimeField);
+        // Arrival Time
+        gbc.gridx = 0; gbc.gridy = 2;
+        JLabel arrivalTimeLabel = new JLabel("Arrival Time");
+        arrivalTimeLabel.setFont(LABEL_FONT);
+        inputPanel.add(arrivalTimeLabel, gbc);
+        gbc.gridx = 1;
+        arrivalTimeField = new JTextField(10);
+        arrivalTimeField.setFont(INPUT_FONT);
+        inputPanel.add(arrivalTimeField, gbc);
 
-        JLabel burstTimeLabel = new JLabel("Burst Time:");
-        burstTimeField = new JTextField();
-        inputPanel.add(burstTimeLabel);
-        inputPanel.add(burstTimeField);
+        // Burst Time
+        gbc.gridx = 0; gbc.gridy = 3;
+        JLabel burstTimeLabel = new JLabel("Burst Time");
+        burstTimeLabel.setFont(LABEL_FONT);
+        inputPanel.add(burstTimeLabel, gbc);
+        gbc.gridx = 1;
+        burstTimeField = new JTextField(10);
+        burstTimeField.setFont(INPUT_FONT);
+        inputPanel.add(burstTimeField, gbc);
 
-        JButton addButton = new JButton("Add Process");
-        inputPanel.add(addButton);
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton addButton = createStyledButton("Add Process", new Color(144, 238, 144));
+        JButton deleteButton = createStyledButton("Delete Process", new Color(144, 238, 144));
+        JButton simulateButton = createStyledButton("SIMULATE", new Color(0, 255, 0));
+        buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(simulateButton);
 
-        JButton startSimulationButton = new JButton("Start Simulation");
-        inputPanel.add(startSimulationButton);
+        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        inputPanel.add(buttonPanel, gbc);
 
-        panel.add(inputPanel, BorderLayout.NORTH);
-
-        processListArea = new JTextArea();
-        processListArea.setEditable(false);
-        panel.add(new JScrollPane(processListArea), BorderLayout.CENTER);
-
-        add(panel);
-        
+        // Predefined Inputs
+        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridwidth = 1;
         JLabel predefinedInputsLabel = new JLabel("Predefined Inputs:");
-        predefinedInputsBox = new JComboBox<>(new String[]{"Scenario 1", "Scenario 2", "Scenario 3"});
-        inputPanel.add(predefinedInputsLabel);
-        inputPanel.add(predefinedInputsBox);
+        predefinedInputsLabel.setFont(LABEL_FONT);
+        inputPanel.add(predefinedInputsLabel, gbc);
+        gbc.gridx = 1;
+        predefinedInputsBox = new JComboBox<>(new String[]{"Set 1", "Set 2", "Set 3"});
+        predefinedInputsBox.setFont(INPUT_FONT);
+        inputPanel.add(predefinedInputsBox, gbc);
 
-        
+        mainPanel.add(inputPanel, BorderLayout.NORTH);
+
+        // Table
+        tableModel = new DefaultTableModel(
+                new String[]{"PROCESS NAME", "TYPE OF PROC.", "ARRIVAL TIME", "BURST TIME"}, 0);
+        processTable = new JTable(tableModel) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make table non-editable
+            }
+        };
+        processTable.setFont(TABLE_FONT);
+        processTable.setRowHeight(25);
+        processTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Set white background and remove grid lines
+        processTable.setBackground(Color.WHITE);
+        processTable.setShowGrid(false);
+
+        JTableHeader header = processTable.getTableHeader();
+        header.setFont(TABLE_HEADER_FONT);
+        header.setBackground(new Color(240, 240, 240));
+        header.setForeground(Color.BLACK);
+
+        JScrollPane scrollPane = new JScrollPane(processTable);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        add(mainPanel);
+
+        // Add action listeners
+        addButton.addActionListener(e -> addProcess());
+        deleteButton.addActionListener(e -> deleteSelectedProcess());
+        simulateButton.addActionListener(e -> startSimulation());
         predefinedInputsBox.addActionListener(e -> loadPredefinedInputs());
-
-        
-        
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addProcess();
-            }
-        });
-
-        startSimulationButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                startSimulation();
-            }
-        });
     }
-    private void loadPredefinedInputs() {
-        processList.clear(); // Clear any existing processes
-        processListArea.setText(""); // Clear the display area
 
-        String selectedScenario = (String) predefinedInputsBox.getSelectedItem();
-        if (selectedScenario.equals("Scenario 1")) {
-            processList.add(new Process("P1", "real-time", 0, 4));
-            processList.add(new Process("P2", "system", 1, 3));
-            processList.add(new Process("P3", "interactive", 2, 5));
-            processList.add(new Process("P4", "batch", 3, 2));
-            processList.add(new Process("P5", "real-time", 4, 1));
-            processList.add(new Process("P6", "system", 5, 4));
-            processList.add(new Process("P7", "interactive", 6, 6));
-            processList.add(new Process("P8", "batch", 7, 3));
-            processList.add(new Process("P9", "real-time", 8, 2));
-            processList.add(new Process("P10", "system", 9, 1));
-            processList.add(new Process("P11", "interactive", 10, 3));
-            processList.add(new Process("P12", "batch", 11, 4));
-            processList.add(new Process("P13", "real-time", 12, 5));
-            processList.add(new Process("P14", "system", 13, 2));
-            processList.add(new Process("P15", "interactive", 14, 3));
-        } else if (selectedScenario.equals("Scenario 2")) {
-            processList.add(new Process("P1", "interactive", 1, 4));
-            processList.add(new Process("P2", "batch", 3, 6));
-            // Add more processes as needed
-        }
-        // Add more scenarios as required
-
-        // Display the loaded processes in the processListArea
-        for (Process process : processList) {
-            processListArea.append(process + "\n");
-        }
+    private JButton createStyledButton(String text, Color color) {
+        JButton button = new JButton(text);
+        button.setBackground(color);
+        button.setFocusPainted(false);
+        button.setFont(BUTTON_FONT);
+        return button;
     }
 
     private void addProcess() {
         try {
+            String name = processNameField.getText();
             String type = (String) processTypeBox.getSelectedItem();
             int arrivalTime = Integer.parseInt(arrivalTimeField.getText());
             int burstTime = Integer.parseInt(burstTimeField.getText());
-            int processNumber = processList.size() + 1;
-            Process process = new Process("P" + processNumber, type, arrivalTime, burstTime);
-            processList.add(process);
 
-            processListArea.append(process + "\n");
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Please enter valid numbers for arrival and burst times.");
+            Process process = new Process(name, type, arrivalTime, burstTime);
+            processList.add(process);
+            addToTable(process);
+
+            // Clear input fields
+            processNameField.setText("");
+            arrivalTimeField.setText("");
+            burstTimeField.setText("");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Please enter numeric values for arrival and burst times.");
+        }
+    }
+
+    private void deleteSelectedProcess() {
+        int selectedRow = processTable.getSelectedRow();
+        if (selectedRow != -1) {
+            processList.remove(selectedRow);
+            tableModel.removeRow(selectedRow);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a process to delete.");
         }
     }
 
     private void startSimulation() {
         new SimulatorScreen(processList).setVisible(true);
-        dispose();
+        this.dispose();
+    }
+
+    private void loadPredefinedInputs() {
+        processList.clear();
+        String selectedSet = (String) predefinedInputsBox.getSelectedItem();
+
+        switch (selectedSet) {
+            case "Set 1":
+                processList.add(new Process("P1", "system", 4, 18));
+                processList.add(new Process("P2", "interactive", 44, 12));
+                processList.add(new Process("P3", "batch", 5, 13));
+                processList.add(new Process("P4", "interactive", 12, 6));
+                processList.add(new Process("P5", "system", 2, 9));
+                processList.add(new Process("P6", "system", 53, 10));
+                processList.add(new Process("P7", "batch", 20, 3));
+                processList.add(new Process("P8", "system", 10, 17));
+                processList.add(new Process("P9", "batch", 1, 14));
+                processList.add(new Process("P10", "interactive", 30, 18));
+                processList.add(new Process("P11", "system", 3, 15));
+                processList.add(new Process("P12", "batch", 9, 51));
+                processList.add(new Process("P13", "interactive", 12, 4));
+                processList.add(new Process("P14", "system", 3, 3));
+                processList.add(new Process("P15", "system", 5, 2));
+                break;
+            case "Set 2":
+                processList.add(new Process("P1", "batch", 0, 12));
+                processList.add(new Process("P2", "batch", 0, 6));
+                processList.add(new Process("P3", "batch", 2, 7));
+                processList.add(new Process("P4", "batch", 5, 10));
+                processList.add(new Process("P5", "batch", 0, 5));
+                processList.add(new Process("P6", "interactive", 6, 8));
+                processList.add(new Process("P7", "interactive", 12, 5));
+                processList.add(new Process("P8", "interactive", 20, 13));
+                processList.add(new Process("P9", "interactive", 0, 15));
+                processList.add(new Process("P10", "interactive", 12, 2));
+                
+                processList.add(new Process("P21", "system", 15, 9));
+                processList.add(new Process("P22", "system", 20, 6));
+                processList.add(new Process("P23", "system", 20, 1));
+                processList.add(new Process("P24", "system", 0, 4));
+                processList.add(new Process("P25", "system", 16, 6));
+                break;
+            case "Set 3":
+                // Add processes for Set 3
+                break;
+        }
+
+        updateTable();
+    }
+
+    private void addToTable(Process process) {
+        tableModel.addRow(new Object[]{process.getName(), process.getType(), process.getArrivalTime(),
+                process.getBurstTime()});
+    }
+
+    private void updateTable() {
+        tableModel.setRowCount(0); // Clear the table
+        for (Process process : processList) {
+            addToTable(process);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            InputScreen inputScreen = new InputScreen();
+            inputScreen.setVisible(true);
+        });
     }
 }

@@ -13,6 +13,7 @@ public class CPUSchedulerSimulator {
 
             JPanel panel = new JPanel();
             panel.setLayout(new BorderLayout());
+            panel.setBackground(Color.WHITE);  // Light gray background
 
             JLabel titleLabel = new JLabel("CPU Scheduling Simulator", SwingConstants.CENTER);
             titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
@@ -36,9 +37,13 @@ public class CPUSchedulerSimulator {
             objectivesText.setEditable(false);
             objectivesText.setLineWrap(true);
             objectivesText.setWrapStyleWord(true);
+            objectivesText.setBackground(Color.WHITE);  // Light gray background for text area
             panel.add(objectivesText, BorderLayout.CENTER);
 
             JButton startButton = new JButton("Start Simulation");
+            startButton.setBackground(new Color(144, 238, 144));  // Light green background
+            startButton.setFocusPainted(false);
+            startButton.setFont(new Font("Arial", Font.BOLD, 12));
             startButton.addActionListener(e -> {
                 new InputScreen().setVisible(true);
                 frame.dispose();

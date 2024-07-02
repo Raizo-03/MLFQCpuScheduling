@@ -8,6 +8,9 @@ public class Process {
     private int remainingTime;
     private String status;
     private int priority;
+    private int waitingTime;
+    private int turnaroundTime;
+    private int completionTime;
 
     public Process(String name, String type, int arrivalTime, int burstTime) {
         this.name = name;
@@ -16,6 +19,9 @@ public class Process {
         this.burstTime = burstTime;
         this.remainingTime = burstTime;
         this.status = "waiting";
+        this.waitingTime = 0;
+        this.turnaroundTime = 0;
+        this.completionTime = 0;
         setInitialPriority();
     }
 
@@ -76,6 +82,30 @@ public class Process {
         if (priority < 3) {
             priority++;
         }
+    }
+
+    public int getWaitingTime() {
+        return waitingTime;
+    }
+
+    public void setWaitingTime(int waitingTime) {
+        this.waitingTime = waitingTime;
+    }
+
+    public void setTurnaroundTime(int turnaroundTime) {
+        this.turnaroundTime = turnaroundTime;
+    }
+
+    public int getTurnaroundTime() {
+        return turnaroundTime;
+    }
+
+    public int getCompletionTime() {
+        return completionTime;
+    }
+
+    public void setCompletionTime(int completionTime) {
+        this.completionTime = completionTime;
     }
 
     @Override
