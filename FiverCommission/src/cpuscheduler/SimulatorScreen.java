@@ -33,7 +33,6 @@ public class SimulatorScreen extends JFrame {
     private double batchFCFSAWT;
     private double batchFCFSATT;
 
-    private static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 12);
     private static final Font BUTTON_FONT = new Font("Arial", Font.BOLD, 12);
     private static final Font TABLE_HEADER_FONT = new Font("Arial", Font.BOLD, 12);
     private static final Font TABLE_FONT = new Font("Arial", Font.PLAIN, 12);
